@@ -1,1 +1,2 @@
+global _main 
 
