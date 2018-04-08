@@ -13,6 +13,21 @@ int 33h ;intialize the mouse
 mov ax,1
 int 33h ;show mouse cursor
 
+next:
+mov ax,3
+int 33h ;position of the cursor
+
+mov ah,7
+int 21h ;wait key to be pressed 
+mov al,15;color of pixel
+mov ah,0ch
+shr cx,1
+int 10h ;set pixel
+jmp next
+mov ah,4ch
+int 21h
+
+
 times (0x400000 - 512) db 0
 
 db 0x63, 0x6F, 0x6E, 0x65, 0x63, 0x74, 0x69, 0x78, 0x00, 0x00, 0x00, 0x02
