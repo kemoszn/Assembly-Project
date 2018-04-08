@@ -7,6 +7,8 @@ mov al, 12h
 mov ah, 0   ; change to video mode.
 int 10h 
 
+mov ax,0
+int 33h ;intialize the mouse
 
 times (0x400000 - 512) db 0
 
