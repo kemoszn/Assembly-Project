@@ -1,5 +1,9 @@
 bits 16
 org 0x7C00
+
+	
+;code goes here
+
 cli
 	xor ax,ax
 	mov ds,ax
@@ -7,11 +11,9 @@ cli
 	mov edi, 0xB8000;
         mov al , 0x40
         mov [edi],al
-        
-    
-            
-        ;;;;;;
-;code goes here
+
+
+;;;;
 
 mov al, 12h
 mov ah, 0   ; change to video mode.
@@ -26,25 +28,7 @@ int 33h ;show mouse cursor
 next:
 mov ax,3
 int 33h ;position of the cursor
-mov ax,7 ;horizontal Min/Max position
-mov cx,0
-mov dx,899 ;range of x axis 0-899
-int 33h
 
-mov ax,8 ;vertical Min/Max position
-mov cx,0
-mov dx,799 ;range of y axis 0-799
-int 33h 
-
-mov cx,x
-mov dx,y
-mov ax,4 ;cursor position
-int 33h
-
-mov ax,9 ;graphics cursor
-mov [xpos],cx
-mov [ypos],y ;x and y cursor position
-int 33h
 
 mov ah,7
 int 21h ;wait key to be pressed 
@@ -53,13 +37,14 @@ mov ah,0ch
 shr cx,1
 int 10h ;set pixel
 jmp next
-mov ah,4ch
-int 21h
+
+
 
 
 times (510 - ($ - $$)) db 0
 db 0x55, 0xAA
 times (0x400000 - 512) db 0
+
 
 db 	0x63, 0x6F, 0x6E, 0x65, 0x63, 0x74, 0x69, 0x78, 0x00, 0x00, 0x00, 0x02
 db	0x00, 0x01, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
