@@ -27,7 +27,7 @@ next:
 mov ax,3
 int 33h ;position of the cursor
 
-mov ax,9
+mov ax,9 ;graphics cursor
 mov bx,[xpos]
 mov cx,[ypos] ;x and y cursor position
 int 33h
