@@ -26,10 +26,24 @@ int 33h ;show mouse cursor
 next:
 mov ax,3
 int 33h ;position of the cursor
+mov ax,7 ;horizontal Min/Max position
+mov cx,0
+mov dx,899 ;range of x axis 0-899
+int 33h
+
+mov ax,8 ;vertical Min/Max position
+mov cx,0
+mov dx,799 ;range of y axis 0-799
+int 33h 
+
+mov cx,x
+mov dx,y
+mov ax,4 ;cursor position
+int 33h
 
 mov ax,9 ;graphics cursor
-mov bx,[xpos]
-mov cx,[ypos] ;x and y cursor position
+mov [xpos],cx
+mov [ypos],y ;x and y cursor position
 int 33h
 
 mov ah,7
