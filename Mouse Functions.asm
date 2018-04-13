@@ -22,19 +22,19 @@ BeginEveryThing:
         
         mov al,13h 
         int 10h  ;;;;;;; VGA Mode	
-biglop:
+    ;;;;;;;;;;; A little something
     call Color_Screen_red
     call Halt
     call Color_Screen_green
     call Halt
     call Color_Screen_blue
     call Halt          
-bigloop:
+bigloop: 
+    ;;;;;;;; setups
     call Color_Screen
     call Draw_Color_Menue
     ;;;;;;;; Enabling The mouse
     call writecheck
-
     mov al,0xf4
     call writetomouse ;;;;;;;;;; enable
     xor eax,eax
@@ -55,7 +55,6 @@ bigloop:
     je nothing
     cmp al,01h 
     je draw
-    
     jmp delete
     
 delete:
@@ -66,9 +65,6 @@ delete:
     int 10h 	;    call BIOS service
     
     
-    
-nnxt:    
-    draw:
     call readfrommouse ;;;;;; delta x
     movsx dx,al
     mov [deltax],dx
@@ -86,16 +82,58 @@ nnxt:
     call check_border
     mov cx,[x]
     cmp cx,319
-    jl noend
+    jl noend_delete
     mov dx,[y]
     cmp dx,199
     jge bigloop
-noend:    
+noend_delete:    
+    mov cx,[x]
+    cmp cx,60
+    jg same_delete    
+    call color_menu_background
+    jmp next1_delete
+same_delete:
+    mov ax,15
+    mov [background_color],ax
+    next1_delete:    
+    mov al,58
+    mov ah,0ch
+    mov cx,[x]
+    mov dx,[y]
+    int 10h
+    
+    
+    call readfrommouse ;;;; scroll
+    jmp nokey
+    
+    draw:
+    call readfrommouse ;;;;;; delta x
+    movsx dx,al
+    mov [deltax],dx
+    call readfrommouse ;;;;;; delta y
+    movsx ax,al
+    mov [deltay],ax
+    
+    mov ax,[deltax]
+    add ax,[x]
+    mov [x],ax
+    
+    mov ax,[deltay]
+    
+    sub [y],ax
+    call check_border
+    ;mov cx,[x]
+;    cmp cx,319
+;    jl noend
+;    mov dx,[y]
+;    cmp dx,199
+;    jge bigloop
+;noend:    
     mov cx,[x]
     cmp cx,60
     jg same    
     call color_menu_background
-    jmp next2
+    jmp next1
 same:
     mov ax,15
     mov [background_color],ax
@@ -109,6 +147,8 @@ same:
     
     call readfrommouse ;;;; scroll
     jmp nokey
+    
+    
     
     nothing:
     
@@ -503,9 +543,6 @@ nop
 nop
 nop
 nop
-;nop
-;nop
-;nop
 loop halt_loop
 dec esi
 cmp esi,0
