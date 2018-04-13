@@ -162,21 +162,21 @@ exit:
 	call Clear_Screen
 	jmp TheBigLoop
 
-MainMenu: db 'A.Press 1 for free drawing',10
-          db'B.Press 2 for Shapes',10,0
+MainMenu: db 'A.Press 1 for free drawing                                                      '
+          db'B.Press 2 for Shapes',0
 
-ShapeMenu: db 'i.Press 1 for Circle',10
-           db 'ii.Press 2 for Square',10
-           db 'iii.Press 3 for Pyramid',10
-           db 'iv.Press 4 for Rectangle',10
-           db 'v.Press 5 for Rightangle Triangle',10
-           db 'vi.Press 6 for IsoscelesTriangle ',10
-           db 'vii.Press 7 for EquilateralTriangle',10
-           db 'viii.Press 8 for Trapizum',10
-           db 'ix.Press 9 for Diamond',10
-           db 'x.Press A for Filled Circle',10
-           db 'xi.Press B for Filled Rectangle',10
-           db ' press ESC in ShapesMenu to return to MainMenu',10,0
+ShapeMenu: db 'i.Press 1 for Circle                                                            '
+           db 'ii.Press 2 for Square                                                           '
+           db 'iii.Press 3 for Pyramid                                                         '
+           db 'iv.Press 4 for Rectangle                                                        '
+           db 'v.Press 5 for Rightangle Triangle                                               '
+           db 'vi.Press 6 for IsoscelesTriangle                                                '
+           db 'vii.Press 7 for EquilateralTriangle                                             '
+           db 'viii.Press 8 for Trapizum                                                       '
+           db 'ix.Press 9 for Diamond                                                          '
+           db 'x.Press A for Filled Circle                                                     '
+           db 'xi.Press B for Filled Rectangle                                                 '
+           db 'press ESC in ShapesMenu to return to MainMenu                                   ',0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -737,7 +737,7 @@ jmp Drawcircle
  circleerror: dw 0
  columnc: dw 0
  rowc: dw 0
- circlecolour: dw 0
+ circlecolour: dw 9
  
  
  circlepixels:
@@ -753,7 +753,7 @@ jmp Drawcircle
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  
  Drawcircleloop:
  mov bx, [radiusfc]
@@ -880,7 +880,7 @@ videographicsdiamond:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  diamondpixels:
  mov ah,0ch
  mov al, [diamondcolour]
@@ -987,7 +987,7 @@ videographicsequtriangle:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  equtrianglepixels:
  mov ah,0ch
  mov al, [equtrianglecolour]
@@ -1077,7 +1077,7 @@ equtline1:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  
  Drawfilledcircleloop:
  mov bx, [radiusfic]
@@ -1207,7 +1207,7 @@ videographicsisotriangle:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  isotrianglepixels:
  mov ah,0ch
  mov al, [isotrianglecolour]
@@ -1272,7 +1272,7 @@ videographicsrigtriangle:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  rigtrianglepixels:
  mov ah,0ch
  mov al, [rigtrianglecolour]
@@ -1359,6 +1359,7 @@ jmp DrawAPryamid
  mov ah, 0
  mov al , 0x13 ;;;;;
  int 0x10
+ call Color_Screen
  ;;;;;;;;;;;;
  pryamidpixels:
  mov ah,0ch
@@ -1477,7 +1478,7 @@ videographicsTrapizum:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  Trapizumpixels:
  mov ah,0ch
  mov al, [Trapizumcolour]
@@ -1569,7 +1570,7 @@ Trapizumline1:
 ;;;;;;;
 mov ax,13h
 int 10h
-
+call Color_Screen
 mov byte [alt],50
 mov byte [comp],100
 mov dx,100
@@ -1625,7 +1626,7 @@ videographicsrectangle:
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  
  
  
@@ -1702,7 +1703,7 @@ jmp Drawsquare
  mov ah, 0
  mov al , 0x13
  int 0x10
- 
+ call Color_Screen
  squarepixels:
  mov ah,0ch
  mov al, [coloursquare]
