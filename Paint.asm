@@ -177,7 +177,11 @@ ShapeMenu: db 'i.Press 1 for Circle                                             
            db 'x.Press A for Filled Circle                                                     '
            db 'xi.Press B for Filled Rectangle                                                 '
            db 'press ESC in ShapesMenu to return to MainMenu                                   ',0
-
+ColourMenu: db 'A.press 1 for white                                                            '
+           db 'B.press 2 for green                                                             '
+           db 'C.press 3 for red                                                               '
+           db 'D.press 4 for blue',0
+color: dw 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Mouse:
@@ -723,6 +727,65 @@ draw_color: dw 0
 background_color: dw 15
 status: dw 0
 
+
+
+;;;;;;;;;;;;;;color_menu
+Activate_Keyboard2:
+call Clear_Screen
+mov edx,ColourMenu
+LoopD2:
+mov al,[edx]
+mov byte [edi],al
+inc edi
+inc edi
+inc edx
+inc ebx
+cmp byte[edx],0
+jne LoopD2
+
+Check_Pressed_Key2:
+in al,0x64
+and al,1
+jz Check_Pressed_Key2
+in al, 0x60
+;cmp al,0x1C
+;jne LET22
+
+
+;LET22:
+cmp al,0x02
+je black
+cmp al,0x03
+je green
+cmp al,0x04
+je red
+cmp al,0x05
+je blue
+;call Clear_Screen
+jmp Activate_Keyboard2
+
+black:
+   mov dx,0
+   mov [color],dx
+   ret 
+green:
+   mov dx,2
+   mov [color],dx
+   ret 
+red:
+   mov dx,4
+   mov [color],dx
+   ret 
+blue:
+   mov dx,1
+   mov [color],dx
+   ret 
+
+
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Circle:
 cli
@@ -737,22 +800,24 @@ jmp Drawcircle
  circleerror: dw 0
  columnc: dw 0
  rowc: dw 0
- circlecolour: dw 9
+
  
  
  circlepixels:
  mov ah,0ch
- mov al, [circlecolour]
+ mov al, [color]
  mov cx,[columnc]
  mov dx,[rowc]
  int 10h
  ret
  
  Drawcircle:
+ call Activate_Keyboard2
  videographicsforcircle:
  mov ah, 0
  mov al , 0x13
  int 0x10
+ 
  call Color_Screen
  
  Drawcircleloop:
@@ -872,10 +937,11 @@ jmp Drawdiamond
  xdiam4: dw 0
  ydiam4: dw 0
 diamonderror: dw 0
-diamondcolour: dw 9
+
 
 
 Drawdiamond:; use the bresenhams algorithms
+call Activate_Keyboard2
 videographicsdiamond:
  mov ah, 0
  mov al , 0x13
@@ -883,7 +949,7 @@ videographicsdiamond:
  call Color_Screen
  diamondpixels:
  mov ah,0ch
- mov al, [diamondcolour]
+ mov al, [color]
  
  Drawdiamondloop: 
  getcoordinates:
@@ -979,10 +1045,11 @@ diamline1:
  xequt3: dw 0
  yequt3: dw 0
 
-equtrianglecolour: dw 9
+
 
 
 Drawequtriangle:
+call Activate_Keyboard2
 videographicsequtriangle:
  mov ah, 0
  mov al , 0x13
@@ -990,7 +1057,7 @@ videographicsequtriangle:
  call Color_Screen
  equtrianglepixels:
  mov ah,0ch
- mov al, [equtrianglecolour]
+ mov al, [color]
  
  Drawequtriangleloop: 
  getcoordinatesforequtriangle:
@@ -1062,17 +1129,18 @@ equtline1:
  columnfc: dw 0
  rowfc: dw 0
  circlefc: dw 0
- filledcirclecolour: dw 9
+
  
  filledcirclepixels:
  mov ah,0ch
- mov al, [filledcirclecolour]
+ mov al, [color]
  mov cx,[columnfc]
  mov dx,[rowfc]
  int 10h
  ret
  
  Drawfilledcircle:
+ call Activate_Keyboard2
  videographicsforfilledcircle:
  mov ah, 0
  mov al , 0x13
@@ -1199,10 +1267,11 @@ jmp Drawisotriangle
  xisot3: dw 173
  yisot3: dw 32
 isotriangleerror: dw 0
-isotrianglecolour: dw 9
+
 
 
 Drawisotriangle:; use the bresenhams algorithms
+call Activate_Keyboard2
 videographicsisotriangle:
  mov ah, 0
  mov al , 0x13
@@ -1210,7 +1279,7 @@ videographicsisotriangle:
  call Color_Screen
  isotrianglepixels:
  mov ah,0ch
- mov al, [isotrianglecolour]
+ mov al, [color]
  
  Drawisotriangleloop: 
  mov cx,[xisot1]
@@ -1264,10 +1333,11 @@ jmp Drawrigtriangle
  xrigt3: dw 0
  yrigt3: dw 0
 
-rigtrianglecolour: dw 9
+
 
 
 Drawrigtriangle:
+call Activate_Keyboard2
 videographicsrigtriangle:
  mov ah, 0
  mov al , 0x13
@@ -1275,7 +1345,7 @@ videographicsrigtriangle:
  call Color_Screen
  rigtrianglepixels:
  mov ah,0ch
- mov al, [rigtrianglecolour]
+ mov al, [color]
  
  Drawrigtriangleloop: 
  getcoordinatesforrigtriangle:
@@ -1352,9 +1422,10 @@ jmp DrawAPryamid
  xpry4: dw 0
  ypry4: dw 0
  
- prycolour: dw 9
+
  
  DrawAPryamid:
+ call Activate_Keyboard2
  videographicspry:
  mov ah, 0
  mov al , 0x13 ;;;;;
@@ -1363,7 +1434,7 @@ jmp DrawAPryamid
  ;;;;;;;;;;;;
  pryamidpixels:
  mov ah,0ch
- mov al, [prycolour]
+ mov al, [color]
  
  Drawpryamidloop: 
  getcoordinatesforpryamid:
@@ -1470,10 +1541,10 @@ jmp DrawTrapizum
  xTrapizum4: dw 0
  yTrapizum4: dw 0
  
-Trapizumcolour: dw 9
 
 
 DrawTrapizum:
+call Activate_Keyboard2
 videographicsTrapizum:
  mov ah, 0
  mov al , 0x13
@@ -1481,7 +1552,7 @@ videographicsTrapizum:
  call Color_Screen
  Trapizumpixels:
  mov ah,0ch
- mov al, [Trapizumcolour]
+ mov al, [color]
  
  DrawTrapizumloop: 
  mov dx,[heightTrapizum]
@@ -1566,7 +1637,7 @@ Trapizumline1:
 ;;;;;;;;;;;
  FilledRectangle:
  cli
- 
+ call Activate_Keyboard2
 ;;;;;;;
 mov ax,13h
 int 10h
@@ -1611,17 +1682,18 @@ jmp Drawrectangle
  yr2: dw 50
  xr: dw 0
  yr: dw 0
-rectangulecolour: dw 9
+
 ;;;;;;;;;;;;;;;;;
 rectanglepixels:
  mov ah,0ch
- mov al, [rectangulecolour]
+ mov al, [color]
  mov cx, [xr]
  mov dx, [yr]
  int 10h
  ret
 
 Drawrectangle:; use the bresenhams algorithms
+call Activate_Keyboard2
 videographicsrectangle:
  mov ah, 0
  mov al , 0x13
@@ -1695,10 +1767,10 @@ jmp Drawsquare
  xs: dw 0
  ys: dw 0
  squareerror: dw 0
- coloursquare: dw 9 ;blue
  
  ;;;;;;;;;;;;;;;;;;;;;
  Drawsquare:; use the bresenhams algorithms
+ call Activate_Keyboard2
  videographicssquare:
  mov ah, 0
  mov al , 0x13
@@ -1706,7 +1778,7 @@ jmp Drawsquare
  call Color_Screen
  squarepixels:
  mov ah,0ch
- mov al, [coloursquare]
+ mov al, [color]
  
  
  Drawloop:
