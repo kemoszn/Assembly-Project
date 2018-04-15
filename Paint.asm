@@ -17,7 +17,7 @@ jmp Start
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 times (510 - ($ - $$)) db 0
 db 0x55, 0xAA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Start:
 
 TheBigLoop:
@@ -34,20 +34,27 @@ TheBigLoop:
 	 inc edi
 	 inc edx
 	 inc bx
-	 call cursor
+	 ;call cursor
 	 cmp byte[edx],0
 	 jne loopA;
 checkStatus:
 	in  al , 0x64
 	and al, 1
 	jz checkStatus
+        call cursor
 	in al, 0x60
-        mov bl,al
-        cmp bl , 0x82
+        FindKey:
+        ;mov bl,al
+        cmp al , 0x02
+	je _activateMouse
+        cmp al , 0x82
 	je _activateMouse 
-	cmp al , 0x83
-	je Activate_Keyboard
-	call Clear_Screen
+	cmp al , 0x03
+	je Activate_Keyboard 
+        cmp al , 0x83
+	je Activate_Keyboard 
+        jmp FindKey
+	;call Clear_Screen
 	jmp TheBigLoop
 	
 cursor:
@@ -101,7 +108,7 @@ inc edi
 inc edi
 inc edx
 inc ebx
-call cursor
+
 cmp byte[edx],0
 jne LoopD
 
@@ -109,48 +116,68 @@ Check_Pressed_Key:
 in al,0x64
 and al,1
 jz Check_Pressed_Key
+call cursor
 in al, 0x60
-cmp al,0x1C
-jne LET2
-
-
-LET2:
-cmp al,0x01
-je Activate_Keyboard
-cmp al,0x1C
-je Activate_Keyboard
-cmp al,0x50
-je Activate_Keyboard
-cmp al,0x48
-je Activate_Keyboard
-cmp al,0x0E
-je Activate_Keyboard
 
 
 cmp al,0x02
-je Circle
-cmp al,0x03
 je Square
+cmp al,0x82
+je Square 
+
+cmp al,0x03
+je Circle
+cmp al,0x83
+je Circle
+
 cmp al,0x04
 je Pyramid
+cmp al,0x84
+je Pyramid
+
 cmp al,0x05
 je Rectangle
+cmp al,0x85
+je Rectangle
+
 cmp al,0x06
 je RigTriangle
+cmp al,0x86
+je RigTriangle
+
 cmp al,0x07
 je IsoTriangle
+cmp al,0x87
+je IsoTriangle
+
 cmp al,0x08
 je EquTriangle
+cmp al,0x88
+je EquTriangle
+
 cmp al,0x09
 je Trapizum
+cmp al,0x89
+je Trapizum
+
 cmp al,0x0A
 je Diamond
+cmp al,0x8A
+je Diamond
+
+
 cmp al,0x1E
 je FilledCircle
+cmp al,0x9E
+je FilledCircle
+
 cmp al,0x30
 je FilledRectangle
+cmp al,0xb0
+je FilledRectangle
 call Clear_Screen
-jmp Activate_Keyboard
+;jmp keyPress2
+jmp Check_Pressed_Key
 
 
 exit:
@@ -162,24 +189,24 @@ exit:
 	call Clear_Screen
 	jmp TheBigLoop
 
-MainMenu: db 'A.Press 1 for free drawing                                                      '
+MainMenu: db 'A.Press 1 for free drawingm   '
           db'B.Press 2 for Shapes',0
 
-ShapeMenu: db 'i.Press 1 for Circle                                                            '
-           db 'ii.Press 2 for Square                                                           '
-           db 'iii.Press 3 for Pyramid                                                         '
-           db 'iv.Press 4 for Rectangle                                                        '
-           db 'v.Press 5 for Rightangle Triangle                                               '
-           db 'vi.Press 6 for IsoscelesTriangle                                                '
-           db 'vii.Press 7 for EquilateralTriangle                                             '
-           db 'viii.Press 8 for Trapizum                                                       '
-           db 'ix.Press 9 for Diamond                                                          '
-           db 'x.Press A for Filled Circle                                                     '
-           db 'xi.Press B for Filled Rectangle                                                 '
-           db 'press ESC in ShapesMenu to return to MainMenu                                   ',0
-ColourMenu: db 'A.press 1 for white                                                            '
-           db 'B.press 2 for green                                                             '
-           db 'C.press 3 for red                                                               '
+ShapeMenu: db 'i.Press 1 for   Square  '
+           db 'ii.Press 2 for   Circle '
+           db 'iii.Press 3 for Pyramid  '
+           db 'iv.Press 4 for Rectangle  '
+           db 'v.Press 5 for Rightangle Triangle  '
+           db 'vi.Press 6 for IsoscelesTriangle   '
+           db 'vii.Press 7 for EquilateralTriangle  '
+           db 'viii.Press 8 for Trapizum  '
+           db 'ix.Press 9 for Diamond   '
+           db 'x.Press A for Filled Circle  '
+           db 'xi.Press B for Filled Rectangle  '
+           db 'press ESC in ShapesMenu to return to MainMenu  ',0
+ColourMenu: db 'A.press 1 for black  '
+           db 'B.press 2 for green  '
+           db 'C.press 3 for red    '
            db 'D.press 4 for blue',0
 color: dw 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -287,14 +314,7 @@ same_delete:
     mov ax,[deltay]
     
     sub [y],ax
-    call check_border
-    ;mov cx,[x]
-;    cmp cx,319
-;    jl noend
-;    mov dx,[y]
-;    cmp dx,199
-;    jge bigloop
-;noend:    
+    call check_border   
     mov cx,[x]
     cmp cx,60
     jg same    
@@ -347,8 +367,7 @@ same:
     mov cx,[x]
     cmp cx,60
     jg same1    
-    ;mov ax,1000b
-;    mov [background_color],ax
+    
     call color_menu_background
     jmp next2
 same1:                 
@@ -747,22 +766,29 @@ Check_Pressed_Key2:
 in al,0x64
 and al,1
 jz Check_Pressed_Key2
+call cursor
 in al, 0x60
-;cmp al,0x1C
-;jne LET22
+keyPress3:
 
 
-;LET22:
-cmp al,0x02
+cmp al,0x02 ;;1
 je black
-cmp al,0x03
+cmp al ,0x82
+je black 
+cmp al,0x03 ;;2
 je green
-cmp al,0x04
+cmp al ,0x83
+je green
+cmp al,0x04 ;;3
 je red
-cmp al,0x05
+cmp al ,0x84
+je red
+cmp al,0x05 ;;4
 je blue
-;call Clear_Screen
-jmp Activate_Keyboard2
+cmp al ,0x85
+je blue
+
+jmp Check_Pressed_Key2
 
 black:
    mov dx,0
@@ -1864,6 +1890,7 @@ Plotpixels:
    
 done:
 ret      
+
 
 
 
