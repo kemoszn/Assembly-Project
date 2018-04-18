@@ -95,7 +95,7 @@ loopC:
 
 LET:
 xor ebx,ebx
-call cursor
+;call cursor
 ret
 
 Activate_Keyboard:
@@ -121,61 +121,64 @@ in al, 0x60
 
 
 cmp al,0x02
-je Square
+je Square   ;;;;;;;; Draw Square
 cmp al,0x82
-je Square 
+je Square   ;;;;;;;; Draw Square 
 
 cmp al,0x03
-je Circle
+je Circle   ;;;;;;;; Draw Circle
 cmp al,0x83
-je Circle
+je Circle   ;;;;;;;; Draw Circle
 
 cmp al,0x04
-je Pyramid
+je Pyramid   ;;;;;;;; Draw Pyramid
 cmp al,0x84
-je Pyramid
+je Pyramid   ;;;;;;;; Draw Pyramid
 
 cmp al,0x05
-je Rectangle
+je Rectangle   ;;;;;;;; Draw Rectangle
 cmp al,0x85
-je Rectangle
+je Rectangle   ;;;;;;;; Draw Rectangle
 
 cmp al,0x06
-je RigTriangle
+je RigTriangle   ;;;;;;;; Draw RigTriangle
 cmp al,0x86
-je RigTriangle
+je RigTriangle   ;;;;;;;; Draw RigTriangle
 
 cmp al,0x07
-je IsoTriangle
+je IsoTriangle   ;;;;;;;; Draw IsoTriangle
 cmp al,0x87
-je IsoTriangle
+je IsoTriangle   ;;;;;;;; Draw IsoTriangle
 
 cmp al,0x08
-je EquTriangle
+je EquTriangle   ;;;;;;;; Draw EquTriangle
 cmp al,0x88
-je EquTriangle
+je EquTriangle   ;;;;;;;; Draw EquTriangle
 
 cmp al,0x09
-je Trapizum
+je Trapizum   ;;;;;;;; Draw Trapizum
 cmp al,0x89
-je Trapizum
+je Trapizum   ;;;;;;;; Draw Trapizum
 
 cmp al,0x0A
-je Diamond
+je Diamond   ;;;;;;;; Draw Diamond
 cmp al,0x8A
-je Diamond
-
+je Diamond   ;;;;;;;; Draw Diamond
 
 cmp al,0x1E
-je FilledCircle
+je FilledCircle   ;;;;;;;; Draw FilledCircle
 cmp al,0x9E
-je FilledCircle
+je FilledCircle   ;;;;;;;; Draw FilledCircle
 
 cmp al,0x30
-je FilledRectangle
+je FilledRectangle   ;;;;;;;; Draw FilledRectangle
 cmp al,0xb0
-je FilledRectangle
-call Clear_Screen
+je FilledRectangle   ;;;;;;;; Draw FilledRectangle
+cmp al,0x26
+je Lines   ;;;;;;;; Draw Lines
+cmp al,0xa6
+je Lines   ;;;;;;;; Draw Lines
+;call Clear_Screen
 ;jmp keyPress2
 jmp Check_Pressed_Key
 
@@ -189,7 +192,7 @@ exit:
 	call Clear_Screen
 	jmp TheBigLoop
 
-MainMenu: db 'A.Press 1 for free drawingm   '
+MainMenu: db 'A.Press 1 for free drawing   '
           db'B.Press 2 for Shapes',0
 
 ShapeMenu: db 'i.Press 1 for   Square  '
@@ -203,6 +206,7 @@ ShapeMenu: db 'i.Press 1 for   Square  '
            db 'ix.Press 9 for Diamond   '
            db 'x.Press A for Filled Circle  '
            db 'xi.Press B for Filled Rectangle  '
+           db 'xii.Press L for Lines   '
            db 'press ESC in ShapesMenu to return to MainMenu  ',0
 ColourMenu: db 'A.press 1 for black  '
            db 'B.press 2 for green  '
@@ -215,16 +219,16 @@ Mouse:
         
         mov al,13h 
         int 10h  ;;;;;;; VGA Mode	
-    ;;;;;;;;;;; A little something
-    call Color_Screen_red
+    ;;;;;;;;;;; A little something Like A logo sun!!!!!!!!!
+    call Color_Screen_red     ;;;; Color the screen red 
+    call Halt                 ;;;; Halt the prgram for a split second
+    call Color_Screen_green     ;;;; Color the screen green 
     call Halt
-    call Color_Screen_green
-    call Halt
-    call Color_Screen_blue
+    call Color_Screen_blue     ;;;; Color the screen blue 
     call Halt          
 bigloop: 
     ;;;;;;;; setups
-    call Color_Screen
+    call Color_Screen     ;;;; Color the screen White for the drawing space
     call Draw_Color_Menue
     ;;;;;;;; Enabling The mouse
     call writecheck
@@ -245,10 +249,10 @@ bigloop:
     and al,11b
     mov [status],al
     cmp al,0
-    je nothing
+    je nothing     ;;;;;;;; Do nothing , neither buttons are clicked
     cmp al,01h 
-    je draw
-    jmp delete
+    je draw     ;;;;;;;; Right button is clicked ,,,, draw a point at the pixel
+    jmp delete     ;;;;;;;;;;; left button is clicked 
     
 delete:
     mov ah,0Ch 	; function 0Ch
@@ -266,13 +270,10 @@ delete:
     mov [deltay],ax
     
     mov ax,[deltax]
-    add ax,[x]
-    mov [x],ax
-    
-    mov ax,[deltay]
-    
+    add [x],ax    
+    mov ax,[deltay]    
     sub [y],ax
-    call check_border
+    call Check_Border
     mov cx,[x]
     cmp cx,319
     jl noend_delete
@@ -308,13 +309,10 @@ same_delete:
     mov [deltay],ax
     
     mov ax,[deltax]
-    add ax,[x]
-    mov [x],ax
-    
+    add [x],ax
     mov ax,[deltay]
-    
     sub [y],ax
-    call check_border   
+    call Check_Border   
     mov cx,[x]
     cmp cx,60
     jg same    
@@ -330,14 +328,10 @@ same:
     mov dx,[y]
     int 10h
     
-    
     call readfrommouse ;;;; scroll
     jmp nokey
     
-    
-    
     nothing:
-    
     mov ah,0Ch 	; function 0Ch
     mov al,[background_color] 	; color 15 - white
     mov cx,[x] 	; x position 
@@ -355,14 +349,11 @@ same:
     mov [deltay],ax
     
     mov ax,[deltax]
-    add ax,[x]
-    mov [x],ax
-    
+    add [x],ax
     mov ax,[deltay]
-    
     sub [y],ax
     
-   call check_border
+   call Check_Border
     
     mov cx,[x]
     cmp cx,60
@@ -385,32 +376,32 @@ same1:
     jmp nokey
     
   
-    check_border:
+    Check_Border:
     mov ax,[x]
     cmp ax,0
-    jge  bo1
+    jge  Check_Border_Left
     mov ax,0
     mov [x],ax
-    bo1:
+    Check_Border_Left:
     mov ax,[x]
     cmp ax,319
-    jle bo2
+    jle Check_Border_Right
     mov ax,319
     mov [x],ax
-    bo2:
+    Check_Border_Right:
     
     mov ax,[y]
     cmp ax,0
-    jge  bo3
+    jge  Check_Border_up
     mov ax,0
     mov [y],ax
-    bo3:
+    Check_Border_up:
     mov ax,[y]
     cmp ax,199
-    jle bo4
+    jle Check_Border_down
     mov ax,199
     mov [y],ax
-    bo4:      
+    Check_Border_down:      
     ret
       
 ;;;;;;;;;;;;; Check if the mouse can be written to          
@@ -507,25 +498,25 @@ Draw_Color_Menue_cxdone:
 ;;;;;;;;;;; x starts at 5 and ends at 55
 ;;;;;;;;;;; y  starts at 5 and ends at 195 
     
-    mov cx,5
-    mov si,55      
-    mov dx,5
-    mov di,45
+    mov cx,5 ;;;;;;x start
+    mov si,55 ;;;;;;x end     
+    mov dx,5 ;;;;;;;; y start
+    mov di,45 ;;;;;;;;y end
     mov bx,0 ;;;;;;; black
     call Draw_Square
-    mov cx,5
-    mov dx,55
-    mov di,95
+    mov cx,5 ;;;;;;x start
+    mov dx,55 ;;;;;;y start
+    mov di,95 ;;;;;;y end
     mov bx,0100b ;;;;;; red
     call Draw_Square
-    mov cx,5
-    mov dx,105
-    mov di,145
+    mov cx,5 ;;;;;;x start
+    mov dx,105 ;;;;;;y start
+    mov di,145 ;;;;;;y end
     mov bx,0001b ;;;;;;;; blue
     call Draw_Square
-    mov cx,5
-    mov dx,155
-    mov di,195
+    mov cx,5 ;;;;;;x start
+    mov dx,155 ;;;;;;y start
+    mov di,195 ;;;;;;y end
     mov bl,0010b ;;;;;;;; green 
     call Draw_Square
        
@@ -554,25 +545,25 @@ ret
 
 
 color_menu_background:
-mov cx,[x]
+mov cx,[x]   
 mov dx,[y]
+;;;;;; current X and Y position
 
-
-cmp cx,5
+cmp cx,5  ;;;; left border
 jge forward
 jmp now
 forward:
-cmp cx,55
+cmp cx,55    ;;;; right border
 jg now
-cmp dx,5
+cmp dx,5  ;;;; upper border
 jge l
 jmp now
 l:
-cmp dx,195
+cmp dx,195  ;;;; lower border
 jg now
 
 black1:
-cmp dx,44
+cmp dx,44 ;;;;; end of black box
 jg outofblack
 mov ax,0
 mov [background_color],ax
@@ -584,14 +575,14 @@ mov [draw_color],ax
 nopressblack:
 jmp color_menu_background_done
 outofblack:
-cmp dx,55
+cmp dx,55 ;;; end of first middle border
 jl border1
 jmp red1
 border1:
-cmp dx,44
+cmp dx,44 ;;;; begginig of first middle border
 jg now
 red1:
-cmp dx,94
+cmp dx,94 ;;;;; end of red box
 jg outofred
 mov ax,0100b
 mov [background_color],ax
@@ -603,14 +594,14 @@ mov [draw_color],ax
 nopressred:
 jmp color_menu_background_done
 outofred:
-cmp dx,105
+cmp dx,105 ;;; end of second middle border
 jl border2
 jmp blue1
 border2:
-cmp dx,94
+cmp dx,94 ;;; beggining of second middle border
 jg now
 blue1:
-cmp dx,144
+cmp dx,144 ;;;;; end of blue box
 jg outofblue
 mov ax,0001b
 mov [background_color],ax
@@ -622,14 +613,14 @@ mov [draw_color],ax
 nopressblue:
 jmp color_menu_background_done
 outofblue:
-cmp dx,155
+cmp dx,155 ;;; end of third middle border
 jl border3
 jmp green1
 border3:
-cmp dx,144
+cmp dx,144 ;;; bigining of third middle border
 jg now
 green1:
-cmp dx,194
+cmp dx,194 ;;;;; end of black box
 jg outofgreen
 mov ax,0010b
 mov [background_color],ax
@@ -737,16 +728,82 @@ jmp Halt_loop
 halt_done:
 ret
 
-tmp: dw 0
-deltax: dw 0
-deltay: dw 0
-x: dw 0
-y: dw 0
-draw_color: dw 0
-background_color: dw 15
-status: dw 0
+Lines:;
+cli
+jmp Drawlines
+
+ heightline: dw 100
+ widthline: dw 100
+ xlinebegin1: dw 15
+ ylinebegin1: dw 10
+ xlinebegin2: dw 15
+ ylinebegin2: dw 150
+ xlinebegin3: dw 200
+ ylinebegin3: dw 10
+ xlinebegin4: dw 260
+ ylinebegin4: dw 90
+ xlineend1: dw 15
+ ylineend1: dw 110
+ xlineend2: dw 150
+ ylineend2: dw 150
+ xlineend3: dw 300
+ ylineend3: dw 110
+ xlineend4: dw 160
+ ylineend4: dw 190
+
+Drawlines:
+call Activate_Keyboard2
+ videographicssquarel:
+ mov ah, 0
+ mov al , 0x13
+ int 0x10
+ call Color_Screen
+ 
+ linepixels:
+ mov ah,0ch
+ mov al, [color]
+ 
+ Drawlineloop: 
 
 
+getlineTrapizuml:
+ mov cx,[xlinebegin1]
+ mov dx,[ylinebegin1] 
+horizontal:
+ int 10h
+ inc dx
+ cmp dx, [ylineend1]
+ jnz horizontal 
+
+ mov cx,[xlinebegin2]
+ mov dx,[ylinebegin2]
+ vertical:
+ int 10h
+ inc cx
+ cmp cx, [xlineend2]
+ jnz vertical
+ 
+ mov cx,[xlinebegin3]
+ mov dx,[ylinebegin3]
+ negslope:
+ int 10h
+ inc cx
+ inc dx
+ cmp cx, [xlineend3]
+ cmp dx, [ylineend3]
+ jnz negslope
+ 
+ mov cx,[xlinebegin4]
+ mov dx,[ylinebegin4]
+ posslope:
+ int 10h
+ dec cx
+ inc dx
+ cmp cx, [xlineend4]
+ cmp cx, [ylineend4]
+ jnz posslope
+ 
+ ret
 
 ;;;;;;;;;;;;;;color_menu
 Activate_Keyboard2:
@@ -806,11 +863,6 @@ blue:
    mov dx,1
    mov [color],dx
    ret 
-
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Circle:
@@ -1891,17 +1943,20 @@ Plotpixels:
 done:
 ret      
 
+;;;;;;;;;;;;;;;
+
+tmp: dw 0
+deltax: dw 0
+deltay: dw 0
+x: dw 0
+y: dw 0
+draw_color: dw 0
+background_color: dw 15
+status: dw 0
 
 
 
-
-
-
-
-
-
-
-
+;;;;;;;;;;;;;
 
 
 times (0x400000 - 512) db 0
