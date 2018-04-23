@@ -34,7 +34,7 @@ TheBigLoop:
 	 inc edi
 	 inc edx
 	 inc bx
-	 ;call cursor
+	 call cursor
 	 cmp byte[edx],0
 	 jne loopA;
 checkStatus:
@@ -108,7 +108,7 @@ inc edi
 inc edi
 inc edx
 inc ebx
-
+call cursor
 cmp byte[edx],0
 jne LoopD
 
@@ -238,13 +238,11 @@ bigloop:
     xor ecx,ecx
     nokey:
     
-    
     in al, 0x64
     and al, 0x20 ;;;;;;;;;;check if it's a mouse not a keyboard ,,, bit number 5 is always 1 in case of the mouse
     jz nokey
     
     call readfrommouse;;;; status
-
     
     and al,11b
     mov [status],al
@@ -255,13 +253,12 @@ bigloop:
     jmp delete     ;;;;;;;;;;; left button is clicked 
     
 delete:
-    mov ah,0Ch 	; function 0Ch
-    mov al,[background_color] ; color 4 - white
+    mov ah,0Ch 	; 
+    mov al,[background_color] 
     mov cx,[x] 	; x position 
     mov dx,[y] 	; y position 
-    int 10h 	;    call BIOS service
-    
-    
+    int 10h 	
+        
     call readfrommouse ;;;;;; delta x
     movsx dx,al
     mov [deltax],dx
@@ -295,8 +292,7 @@ same_delete:
     mov cx,[x]
     mov dx,[y]
     int 10h
-    
-    
+        
     call readfrommouse ;;;; scroll
     jmp nokey
     
@@ -332,15 +328,12 @@ same:
     jmp nokey
     
     nothing:
-    mov ah,0Ch 	; function 0Ch
-    mov al,[background_color] 	; color 15 - white
+    mov ah,0Ch 	; 
+    mov al,[background_color] 	;
     mov cx,[x] 	; x position 
     mov dx,[y] 	; y position 
-    int 10h 	;    call BIOS service
+    int 10h 	;    
     
-    
-    
-
     call readfrommouse ;;;;;; delta x
     movsx dx,al
     mov [deltax],dx
@@ -370,8 +363,7 @@ same1:
     mov cx,[x]
     mov dx,[y]
     int 10h
-    
-    
+        
     call readfrommouse ;;;; scroll
     jmp nokey
     
@@ -446,7 +438,6 @@ call readcheck
 in al,0x60
 ret
 
-
 ;;;;;;;;;;;;;; colors the screen white
 Color_Screen:
     mov cx,320
@@ -467,11 +458,6 @@ Color_Screen_dxdone:
     jmp Color_Screen_cxloop    
 Color_Screen_cxdone:
 ret  
-
-
-
-
-
 
 
 ;;;;;;;;;;;; draws the left window to choose your color
@@ -542,7 +528,6 @@ Draw_Square_dxdone:
  
 Draw_Square_done: 
 ret
-
 
 color_menu_background:
 mov cx,[x]   
@@ -638,13 +623,10 @@ jmp now
 color_menu_background_done:
 ret
 
-
-
 now:
 mov ax,1000b
 mov [background_color],ax
 jmp color_menu_background_done
-
 
 
 Color_Screen_red:
@@ -687,7 +669,6 @@ Color_Screen_green_dxdone:
 Color_Screen_green_cxdone:
 ret
 
-
 Color_Screen_blue:
     mov dx,0
 Color_Screen_blue_dxloop:
@@ -707,7 +688,6 @@ Color_Screen_blue_cxdone:
     jmp Color_Screen_blue_dxloop    
 Color_Screen_blue_dxdone:
 ret
-
 
 
 Halt:
@@ -765,7 +745,6 @@ call Activate_Keyboard2
  
  Drawlineloop: 
 
-
 getlineTrapizuml:
  mov cx,[xlinebegin1]
  mov dx,[ylinebegin1] 
@@ -816,6 +795,7 @@ inc edi
 inc edi
 inc edx
 inc ebx
+call cursor
 cmp byte[edx],0
 jne LoopD2
 
@@ -826,7 +806,6 @@ jz Check_Pressed_Key2
 call cursor
 in al, 0x60
 keyPress3:
-
 
 cmp al,0x02 ;;1
 je black
@@ -878,8 +857,6 @@ jmp Drawcircle
  circleerror: dw 0
  columnc: dw 0
  rowc: dw 0
-
- 
  
  circlepixels:
  mov ah,0ch
@@ -1016,8 +993,6 @@ jmp Drawdiamond
  ydiam4: dw 0
 diamonderror: dw 0
 
-
-
 Drawdiamond:; use the bresenhams algorithms
 call Activate_Keyboard2
 videographicsdiamond:
@@ -1123,9 +1098,6 @@ diamline1:
  xequt3: dw 0
  yequt3: dw 0
 
-
-
-
 Drawequtriangle:
 call Activate_Keyboard2
 videographicsequtriangle:
@@ -1159,9 +1131,7 @@ videographicsequtriangle:
  mov [xequt3],cx
  mov [yequt3],dx
   int 10h
- 
- 
- 
+   
   getlineequtriangle:
  mov cx,[xequt1]
  mov dx,[yequt1] 
@@ -1322,8 +1292,6 @@ Plotfilledcirclepixels:
         mov [filledcircleerror],ax
         jmp Plotfilledcirclepixels
         
-  
-
 donefilledcircleloop:
 dec word [radiusfic]
 call Drawfilledcircleloop
@@ -1345,8 +1313,6 @@ jmp Drawisotriangle
  xisot3: dw 173
  yisot3: dw 32
 isotriangleerror: dw 0
-
-
 
 Drawisotriangle:; use the bresenhams algorithms
 call Activate_Keyboard2
@@ -1393,8 +1359,6 @@ isoline2:
  jnz isoline3
 ret
 
-
-
 ;;;;;;;;;;;;;;;;;
 RigTriangle:
 cli
@@ -1410,9 +1374,6 @@ jmp Drawrigtriangle
  yrigt2: dw 0
  xrigt3: dw 0
  yrigt3: dw 0
-
-
-
 
 Drawrigtriangle:
 call Activate_Keyboard2
@@ -1477,8 +1438,6 @@ rigtline1:
  jnz rigtline3
 
  ret
-
-
 
 ;;;;;;;;;;;;;;;;;
 Pyramid:
@@ -1595,9 +1554,6 @@ jmp DrawAPryamid
  
  ret
  
-
-
-
 ;;;;;;;;;;
 Trapizum:
 cli
@@ -1708,10 +1664,6 @@ Trapizumline1:
 
  ret
 
-
-
-
-
 ;;;;;;;;;;;
  FilledRectangle:
  cli
@@ -1747,8 +1699,7 @@ int 21h
 ret 
 comp db 1
 alt  db 1
- 
- 
+  
  ;;;;;;;;;;;
 Rectangle:
 cli
@@ -1777,9 +1728,7 @@ videographicsrectangle:
  mov al , 0x13
  int 0x10
  call Color_Screen
- 
- 
- 
+  
  Drawrectangleloop: 
  mov cx,[xr1]
  mov [xr],cx
@@ -1831,8 +1780,7 @@ mov [yr],ax
  cmp dx,[yr1]
  jl height2
  ret
- 
- 
+  
  ;;;;;;;;;;;;
  Square:
  cli
@@ -1954,10 +1902,7 @@ draw_color: dw 0
 background_color: dw 15
 status: dw 0
 
-
-
 ;;;;;;;;;;;;;
-
 
 times (0x400000 - 512) db 0
 
