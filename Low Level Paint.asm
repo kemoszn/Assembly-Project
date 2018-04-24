@@ -1679,7 +1679,7 @@ mov cx,100
 tang:
 rec:
 mov ah,0ch
-mov al,23h
+mov al,[color]
 mov bh,0
 int 10h
 dec cx
